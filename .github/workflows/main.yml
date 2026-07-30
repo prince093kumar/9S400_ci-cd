@@ -1,4 +1,4 @@
-name: Deploy Static HTML
+name: Validate and Deploy HTML
 
 on:
   push:
@@ -20,17 +20,19 @@ jobs:
 
       - name: Check if index.html exists
         run: |
-          if [ -f "index.html" ]; then
-            echo "✅ index.html found."
-          else
-            echo "❌ index.html not found!"
-            exit 1
-          fi
+          test -f index.html || (echo "index.html not found" && exit 1)
+
+      - name: Validate HTML
+        run: |
+          docker run --rm \
+            -v "${{ github.workspace }}:/site:ro" \
+            ghcr.io/validator/validator:latest \
+            --errors-only /site/index.html
 
       - name: Setup GitHub Pages
         uses: actions/configure-pages@v5
 
-      - name: Upload HTML
+      - name: Upload Pages Artifact
         uses: actions/upload-pages-artifact@v3
         with:
           path: .
