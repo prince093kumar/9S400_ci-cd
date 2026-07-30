@@ -20,14 +20,16 @@ jobs:
 
       - name: Check if index.html exists
         run: |
-          test -f index.html || (echo "index.html not found" && exit 1)
+          if [ ! -f index.html ]; then
+            echo "❌ Error: index.html not found!"
+            exit 1
+          fi
+          echo "✅ index.html found."
 
       - name: Validate HTML
-        run: |
-          docker run --rm \
-            -v "${{ github.workspace }}:/site:ro" \
-            ghcr.io/validator/validator:latest \
-            --errors-only /site/index.html
+        uses: Cyb3r-Jak3/html5validator-action@v7
+        with:
+          root: .
 
       - name: Setup GitHub Pages
         uses: actions/configure-pages@v5
