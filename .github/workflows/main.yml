@@ -10,9 +10,17 @@ permissions:
   pages: write
   id-token: write
 
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
 
     steps:
       - name: Checkout Repository
@@ -26,18 +34,28 @@ jobs:
           fi
           echo "✅ index.html found."
 
-      - name: Validate HTML
-        uses: Cyb3r-Jak3/html5validator-action@v7
+      - name: Setup Python
+        uses: actions/setup-python@v5
         with:
-          root: .
+          python-version: "3.12"
+
+      - name: Install HTML5 Validator
+        run: |
+          python -m pip install --upgrade pip
+          pip install html5validator
+
+      - name: Validate HTML
+        run: |
+          html5validator --root .
 
       - name: Setup GitHub Pages
         uses: actions/configure-pages@v5
 
-      - name: Upload Pages Artifact
+      - name: Upload Website
         uses: actions/upload-pages-artifact@v3
         with:
           path: .
 
       - name: Deploy to GitHub Pages
+        id: deployment
         uses: actions/deploy-pages@v4
