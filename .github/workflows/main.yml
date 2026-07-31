@@ -19,17 +19,14 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
 
     steps:
-
       - name: Checkout Repository
         uses: actions/checkout@v4
 
       - name: Check Required Files
         run: |
-          test -f index.html || (echo "❌ index.html not found" && exit 1)
-          test -f style.css || (echo "❌ style.css not found" && exit 1)
-          test -f script.js || (echo "❌ script.js not found" && exit 1)
-
-          echo "✅ All files found."
+          test -f index.html || (echo "index.html not found" && exit 1)
+          test -f style.css || (echo "style.css not found" && exit 1)
+          test -f script.js || (echo "script.js not found" && exit 1)
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -39,7 +36,6 @@ jobs:
       - name: Validate JavaScript Syntax
         run: |
           node --check script.js
-          echo "✅ JavaScript syntax is valid."
 
       - name: Install HTML Validator
         run: |

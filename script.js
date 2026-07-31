@@ -1,6 +1,6 @@
-function changeMessage(){
+const button = document.getElementById("btn");
+const message = document.getElementById("message");
 
-    const message = document.getElementById("message");
-
-    message.innerHTML = "GitHub Actions Successfully Running!";
-}
+button.addEventListener("click", () => {
+    message.textContent = "GitHub Actions Validation Successful!";
+});
